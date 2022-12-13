@@ -41,5 +41,4 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
 app.delete("/todos/:id", (request, response) => {
   console.log("Delete a todo by id:", request.params.id);
 });
-
 module.exports = app;
