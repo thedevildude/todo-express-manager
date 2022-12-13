@@ -30,7 +30,7 @@ describe("Todo test suite", () => {
 
   test("Mark a Todo as complete", async () => {
     const response = await agent.post("/todos").send({
-      title: "Buy Milk and Water",
+      title: "Buy Milk",
       dueDate: new Date().toISOString(),
       completed: false,
     });
