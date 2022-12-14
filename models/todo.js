@@ -15,6 +15,19 @@ module.exports = (sequelize, DataTypes) => {
       return this.create({ title: title, dueDate: dueDate, completed: false });
     }
 
+    static getTodos() {
+      return this.findAll();
+    }
+
+    static deleteTodo(id) {
+      return this.destroy({
+        where: {
+          id: id,
+        },
+        force: true,
+      });
+    }
+
     markAsCompleted() {
       return this.update({ completed: true });
     }
