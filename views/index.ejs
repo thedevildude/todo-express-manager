@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="./css/styles.css">
-  <title>Document</title>
+  <title>To-Do Manager</title>
 </head>
 
 <body>
@@ -17,7 +17,8 @@
         <form>
           <div class="flex gap-2 py-4">
             <div class="flex-auto">
-              <input type="text" placeholder="What's next?" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" required />
+              <input type="text" placeholder="What's next?"
+                class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" required />
             </div>
             <div class="flex-auto">
               <input type="date" class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" />
@@ -27,7 +28,9 @@
             </div>
           </div>
         </form>
+        <%- include('todos.ejs') %>
     </div>
   </div>
 </body>
+
 </html>

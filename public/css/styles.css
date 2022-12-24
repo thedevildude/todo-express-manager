@@ -2,3 +2,7 @@ body {
   font-family: sans-serif;
   background-color: white;
 }
+
+.Todo-Item:hover .thrash-icon {
+  display: block;
+}
