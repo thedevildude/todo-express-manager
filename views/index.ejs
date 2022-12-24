@@ -13,8 +13,8 @@
     var token = document
       .querySelector('meta[name="csrf-token"]')
       .getAttribute("content");
-    function updateTodo(id) {
-      fetch(`/todos/${id}/markAsCompleted`, {
+    function updateTodo(id, completionStatus) {
+      fetch(`/todos/${id}`, {
         method: "put",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({
@@ -59,7 +59,7 @@
             </div>
             <div class="flex-auto">
               <input type="date" name="dueDate"
-                class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" />
+                class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" required />
             </div>
             <div class="flex-none">
               <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium mr-2 mb">Add</button>
@@ -67,7 +67,7 @@
           </div>
         </form>
         <div>
-          <%- include('todos.ejs', {overdue, dueToday, dueLater}) %>
+          <%- include('todos.ejs', {overdue, dueToday, dueLater, completed}) %>
         </div>
     </div>
   </div>

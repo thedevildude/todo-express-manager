@@ -35,7 +35,7 @@ describe("Todo test suite", () => {
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
     await agent.post("/todos").send({
-      title: "Buy Milk",
+      title: "Buy Milk in store",
       dueDate: new Date().toISOString(),
       completed: false,
       _csrf: csrfToken,
@@ -51,24 +51,42 @@ describe("Todo test suite", () => {
     csrfToken = extractCsrfToken(res);
 
     const markCompleteResponse = await agent
-      .put(`/todos/${latestTodo.id}/markAsCompleted`)
+      .put(`/todos/${latestTodo.id}`)
       .send({
         _csrf: csrfToken,
+        completed: !latestTodo.completed,
       });
     const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
-    expect(parsedUpdateResponse.completed).toBe(true);
+    expect(parsedUpdateResponse.completed).toBe(!latestTodo.completed);
   });
 
-  /* test("Delete a todo", async () => {
-    const response = await agent.post("/todos").send({
+  test("Delete a todo", async () => {
+    let res = await agent.get("/");
+    let csrfToken = extractCsrfToken(res);
+
+    await agent.post("/todos").send({
       title: "Buy Milk",
       dueDate: new Date().toISOString(),
       completed: false,
+      _csrf: csrfToken,
     });
-    const parsedResponse = JSON.parse(response.text);
-    const todoID = parsedResponse.id;
-    const deleteTodo = await agent.delete(`/todos/${todoID}`).send();
-    const deletedTodoResponse = JSON.parse(deleteTodo.text);
-    expect(deletedTodoResponse).toBe(true);
-  }); */
+
+    const groupedTodoResponse = await agent
+      .get("/")
+      .set("Accept", "application/json");
+    const parsedGroupedResponse = await JSON.parse(groupedTodoResponse.text);
+
+    expect(parsedGroupedResponse.dueToday).toBeDefined();
+
+    const dueTodayCount = parsedGroupedResponse.dueToday.length;
+    const latestTodo = parsedGroupedResponse.dueToday[dueTodayCount - 1];
+
+    res = await agent.get("/");
+    csrfToken = extractCsrfToken(res);
+
+    const deletedResponse = await agent.delete(`/todos/${latestTodo.id}`).send({
+      _csrf: csrfToken,
+    });
+    expect(deletedResponse.statusCode).toBe(200);
+  });
 });
