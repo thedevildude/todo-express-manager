@@ -10,14 +10,20 @@ app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 
 app.get("/", async (request, response) => {
-  const allTodos = await Todo.getTodos();
+  const overdue = await Todo.overdue();
+  const dueToday = await Todo.dueToday();
+  const dueLater = await Todo.dueLater();
   if (request.accepts("html")) {
     response.render("index", {
-      allTodos,
+      overdue,
+      dueToday,
+      dueLater,
     });
   } else {
     response.json({
-      allTodos,
+      overdue,
+      dueToday,
+      dueLater,
     });
   }
 });
@@ -65,14 +71,9 @@ app.put("/todos/:id/markAsCompleted", async (request, response) => {
 app.delete("/todos/:id", async (request, response) => {
   console.log("Delete a todo by id:", request.params.id);
   try {
-    const deletedTodo = await Todo.deleteTodo(request.params.id);
-    if (deletedTodo == 1) {
-      response.send(true);
-    } else if (deletedTodo == 0) {
-      response.send(false);
-    }
+    await Todo.remove(request.params.id);
+    return response.json({ success: true });
   } catch (error) {
-    console.log(error);
     return response.status(422).json(error);
   }
 });
