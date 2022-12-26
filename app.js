@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 var csrf = require("tiny-csrf");
 var cookieParser = require("cookie-parser");
+const flash = require("connect-flash");
 
 const { Todo, User } = require("./models");
 
@@ -17,6 +18,8 @@ const saltRounds = 10;
 
 // Set ejs as view engine
 app.set("view engine", "ejs");
+// Views folder is accessible globally
+app.set("views", path.join(__dirname, "views"));
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,6 +36,13 @@ app.use(
   })
 );
 
+// Connect-flash implementation
+app.use(flash());
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -44,16 +54,16 @@ passport.use(
     },
     (username, password, done) => {
       User.findOne({ where: { email: username } })
-        .then(async (user) => {
+        .then(async function (user) {
           const result = await bcrypt.compare(password, user.password);
           if (result) {
             return done(null, user);
           } else {
-            done("Invalid Password");
+            return done(null, false, { message: "Invalid password" });
           }
         })
         .catch((error) => {
-          return error;
+          return done(error);
         });
     }
   )
@@ -147,8 +157,11 @@ app.get("/login", (request, response) => {
 
 app.post(
   "/session",
-  passport.authenticate("local", { failureRedirect: "/login" }),
-  (request, response) => {
+  passport.authenticate("local", {
+    failureRedirect: "/login",
+    failureFlash: true,
+  }),
+  function (request, response) {
     console.log(request.user);
     response.redirect("/todos");
   }
@@ -179,6 +192,15 @@ app.post(
   "/todos",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
+    if (request.body.title.length == 0 || request.body.dueDate.length == 0) {
+      if (request.body.title.length == 0) {
+        request.flash("error", "Title can't be empty!");
+      }
+      if (request.body.dueDate.length == 0) {
+        request.flash("error", "Please select a due date!");
+      }
+      return response.redirect("/todos");
+    }
     console.log("Creating a todo");
     try {
       await Todo.addTodo({

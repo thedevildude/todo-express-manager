@@ -56,17 +56,22 @@
         <div class="flex gap-2 py-4">
           <div class="flex-auto">
             <input type="text" name="title" placeholder="What's next?"
-              class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" required />
+              class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm" />
           </div>
           <div class="flex-auto">
             <input type="date" name="dueDate"
-              class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" required />
+              class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4" />
           </div>
           <div class="flex-none">
             <button type="submit" class="bg-green-600 text-white px-5 py-1.5 rounded font-medium mr-2 mb">Add</button>
           </div>
         </div>
       </form>
+      <% if(messages && messages.error && messages.error.length > 0)  { %>
+        <% for(var i = 0; i < messages.error.length; i++) { %>
+          <p class="bg-red-400 my-3 rounded px-4 py-2"><%= messages.error[i] %></p>
+        <% } %>
+      <% } %>
       <div>
         <%- include('todo.ejs', {overdue, dueToday, dueLater, completed}) %>
       </div>
