@@ -144,7 +144,10 @@ app.post("/users", async (request, response) => {
       response.redirect("/todos");
     });
   } catch (error) {
-    console.log(error);
+    const errorArray = error.message.split(",");
+    request.flash("error", errorArray);
+    console.log(errorArray);
+    return response.redirect("/signup");
   }
 });
 
@@ -192,15 +195,6 @@ app.post(
   "/todos",
   connectEnsureLogin.ensureLoggedIn(),
   async (request, response) => {
-    if (request.body.title.length == 0 || request.body.dueDate.length == 0) {
-      if (request.body.title.length == 0) {
-        request.flash("error", "Title can't be empty!");
-      }
-      if (request.body.dueDate.length == 0) {
-        request.flash("error", "Please select a due date!");
-      }
-      return response.redirect("/todos");
-    }
     console.log("Creating a todo");
     try {
       await Todo.addTodo({
@@ -211,8 +205,9 @@ app.post(
       });
       return response.redirect("/todos");
     } catch (error) {
-      console.log(error);
-      return response.status(422).json(error);
+      const errorArray = error.message.split(",");
+      request.flash("error", errorArray);
+      return response.redirect("/todos");
     }
   }
 );
