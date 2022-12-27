@@ -18,6 +18,7 @@
         method: "put",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({
+          completed: completionStatus,
           "_csrf": token
         })
       })
@@ -67,7 +68,10 @@
           </div>
         </form>
         <div>
-          <%- include('todos.ejs', {overdue, dueToday, dueLater, completed}) %>
+          <%- include('todos.ejs', {title: "Overdue", data: overdue}) %>
+          <%- include('todos.ejs', {title: "Due Today", data: dueToday}) %>
+          <%- include('todos.ejs', {title: "Due Later", data: dueLater}) %>
+          <%- include('todos.ejs', {title: "Completed Items", data: completed}) %>
         </div>
     </div>
   </div>
