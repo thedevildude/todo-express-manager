@@ -63,7 +63,10 @@ passport.use(
           }
         })
         .catch((error) => {
-          return done(error);
+          return done(null, false, {
+            message: "Username is not registered",
+            error,
+          });
         });
     }
   )
